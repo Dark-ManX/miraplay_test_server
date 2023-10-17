@@ -1,5 +1,5 @@
 require_relative "boot"
-
+require 'rack'
 require "rails/all"
 
 # Require the gems listed in Gemfile, including any gems
@@ -9,6 +9,13 @@ Bundler.require(*Rails.groups)
 module Backend
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
+    config.middleware.insert_before 0, Rack::Cors do
+      allow do
+        origins '*'
+        resource '*', headers: :any, methods: [:get, :post, :options]
+      end
+    end
+
     config.load_defaults 7.1
 
     # Please, add to the `ignore` list any other `lib` subdirectories that do

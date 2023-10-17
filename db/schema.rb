@@ -10,33 +10,32 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 0) do
+ActiveRecord::Schema[7.1].define(version: 2023_10_16_154735) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
-  create_table "items", primary_key: "item_id", id: :integer, default: nil, force: :cascade do |t|
-    t.string "item_name", limit: 40, null: false
-    t.text "item_description", null: false
-    t.decimal "item_price", precision: 10, scale: 2, null: false
+  create_table "admins", force: :cascade do |t|
+    t.string "email", default: "", null: false
+    t.string "encrypted_password", default: "", null: false
+    t.string "reset_password_token"
+    t.datetime "reset_password_sent_at"
+    t.datetime "remember_created_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["email"], name: "index_admins_on_email", unique: true
+    t.index ["reset_password_token"], name: "index_admins_on_reset_password_token", unique: true
   end
 
-  create_table "orders", primary_key: "order_id", id: :integer, default: nil, force: :cascade do |t|
-    t.integer "user_id", null: false
-    t.integer "order_amount", limit: 2, null: false
-  end
-
-  create_table "orders_description", primary_key: "order_description_id", id: :integer, default: nil, force: :cascade do |t|
-    t.integer "order_id", null: false
-    t.integer "item_id", null: false
-    t.integer "order_description_quantity", limit: 2, null: false
-  end
-
-  create_table "users", primary_key: "user_id", id: :integer, default: nil, force: :cascade do |t|
-    t.string "first_name", limit: 40, null: false
-    t.string "last_name", limit: 40, null: false
-    t.string "user_email", limit: 30, null: false
-    t.string "user_password", limit: 25, null: false
-    t.string "user_role", limit: 5, null: false
+  create_table "users", force: :cascade do |t|
+    t.string "email", default: "", null: false
+    t.string "encrypted_password", default: "", null: false
+    t.string "reset_password_token"
+    t.datetime "reset_password_sent_at"
+    t.datetime "remember_created_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["email"], name: "index_users_on_email", unique: true
+    t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
 end
