@@ -1,8 +1,11 @@
 # frozen_string_literal: true
+require 'bcrypt'
+context_id = 165
+IdGenerator.configuration.context_id = context_id
 
-class User::RegistrationsController < Devise::RegistrationsController
-  # before_action :configure_sign_up_params, only: [:create]
-  # before_action :configure_account_update_params, only: [:update]
+
+class Users::RegistrationsController < Devise::RegistrationsController
+  before_action :configure_permitted_params, only: [:create]
 
   # GET /resource/sign_up
   # def new
@@ -11,29 +14,30 @@ class User::RegistrationsController < Devise::RegistrationsController
 
   # POST /resource
   def create
-    super
-    debugger
-    user = User.create(
-      first_name: params[:firstName], 
-      last_name: params[:lastName],
-      email: params[:email],
-      encrypted_password: params[:password]
-      )
+    @user = User.new(
+      # id: IdGenerator.generate,
+      email: params[:user][:email],
+      encrypted_password: params[:user][:password],
+      first_name: params[:user][:firstName],
+      last_name: params[:user][:lastName],
+      user_role: params[:user][:role]
+    )
+    puts @user
+    @user.save
 
-    if user
-      session[:id] = user.id
+    if !@user
       render json: {
-        code: 201,
-        status: 'success',
-        body: user
+        code: 400,
+        status: 'failure'
       }
-    else {
-      render json: {
-        code: 500,
-        status: 'error'
-      }
-    }
-
+    else 
+      respond_with @user
+      # render json: {
+      #   code: 201,
+      #   status: 'success',
+      #   payload: @user
+      # }
+    end
   end
 
   # GET /resource/edit
@@ -60,16 +64,16 @@ class User::RegistrationsController < Devise::RegistrationsController
   #   super
   # end
 
-  # protected
+  protected
 
   # If you have extra params to permit, append them to the sanitizer.
-  # def configure_sign_up_params
-  #   devise_parameter_sanitizer.permit(:sign_up, keys: [:attribute])
-  # end
+  def configure_permitted_params
+    devise_parameter_sanitizer.permit(:sign_up, keys: [:first_name, :last_name, :user_role])
+  end
 
   # If you have extra params to permit, append them to the sanitizer.
   # def configure_account_update_params
-  #   devise_parameter_sanitizer.permit(:account_update, keys: [:attribute])
+  #   devise_parameter_sanitizer.permit(:account_update, keys: [:first_name, :last_name, :user_role])
   # end
 
   # The path used after sign up.
@@ -80,5 +84,6 @@ class User::RegistrationsController < Devise::RegistrationsController
   # The path used after sign up for inactive accounts.
   # def after_inactive_sign_up_path_for(resource)
   #   super(resource)
-  # end
+  # end  
+
 end
