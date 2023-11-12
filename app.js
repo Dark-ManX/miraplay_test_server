@@ -9,6 +9,5 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 app.use("/users", usersRouter);
-// app.use("/files", filesRouter);
 
 module.exports = app;
